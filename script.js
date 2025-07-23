@@ -21,9 +21,12 @@ class SolomojiProcessor {
     initializeEventListeners() {
         // File upload events - ensure proper event handling
         this.uploadArea.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Upload area clicked');
-            this.fileInput.click();
+            // Only trigger file input if the click is not on the browse link
+            if (!e.target.classList.contains('browse-link')) {
+                e.preventDefault();
+                console.log('Upload area clicked');
+                this.fileInput.click();
+            }
         });
         
         this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
@@ -319,70 +322,169 @@ class SolomojiProcessor {
     }
 
     extractAllEmojisFromText(text) {
+        // Use a single, clean approach to avoid duplicates and false positives
         const emojis = [];
         
-        // Method 1: Unicode property approach (most modern and comprehensive)
-        try {
-            const matches = text.match(/\p{Emoji}/gu);
-            if (matches) {
-                emojis.push(...matches);
-            }
-        } catch (e) {
-            console.log('Unicode property approach failed, using fallback methods');
-        }
-        
-        // Method 2: Comprehensive Unicode ranges
-        const emojiRanges = [
-            /[\u{1F600}-\u{1F64F}]/gu, // Emoticons
-            /[\u{1F300}-\u{1F5FF}]/gu, // Misc Symbols and Pictographs
-            /[\u{1F680}-\u{1F6FF}]/gu, // Transport and Map Symbols
-            /[\u{1F1E6}-\u{1F1FF}]/gu, // Regional Indicator Symbols
-            /[\u{2600}-\u{26FF}]/gu,   // Misc symbols
-            /[\u{2700}-\u{27BF}]/gu,   // Dingbats
-            /[\u{1F900}-\u{1F9FF}]/gu, // Supplemental Symbols and Pictographs
-            /[\u{1FA00}-\u{1FA6F}]/gu, // Chess Symbols
-            /[\u{1FA70}-\u{1FAFF}]/gu, // Symbols and Pictographs Extended-A
-            /[\u{1F004}]/gu,           // Mahjong tile
-            /[\u{1F0CF}]/gu,           // Playing card
-            /[\u{1F170}-\u{1F251}]/gu  // Enclosed characters
-        ];
-        
-        emojiRanges.forEach(regex => {
-            const matches = text.match(regex);
-            if (matches) {
-                emojis.push(...matches);
-            }
-        });
-        
-        // Method 3: Character by character analysis
+        // Split text into individual characters (properly handling Unicode surrogate pairs)
         const chars = [...text];
+        
         chars.forEach(char => {
             const code = char.codePointAt(0);
             
-            // Check all major emoji code point ranges
-            if ((code >= 0x1F600 && code <= 0x1F64F) || // Emoticons
-                (code >= 0x1F300 && code <= 0x1F5FF) || // Misc Symbols and Pictographs
-                (code >= 0x1F680 && code <= 0x1F6FF) || // Transport and Map
-                (code >= 0x1F1E6 && code <= 0x1F1FF) || // Regional indicators
-                (code >= 0x2600 && code <= 0x26FF) ||   // Misc symbols
-                (code >= 0x2700 && code <= 0x27BF) ||   // Dingbats
-                (code >= 0x1F900 && code <= 0x1F9FF) || // Supplemental Symbols and Pictographs
-                (code >= 0x1FA00 && code <= 0x1FA6F) || // Chess Symbols
-                (code >= 0x1FA70 && code <= 0x1FAFF) || // Extended-A
-                code === 0x1F004 ||                     // Mahjong
-                code === 0x1F0CF ||                     // Playing card
-                (code >= 0x1F170 && code <= 0x1F251)) { // Enclosed
-                
-                // Avoid duplicates
-                if (!emojis.includes(char)) {
-                    emojis.push(char);
-                }
+            // Check if character is in emoji ranges (most comprehensive approach)
+            if (this.isEmojiCharacter(code)) {
+                emojis.push(char);
             }
         });
         
-        // Remove duplicates while preserving order - but for this method, we want ALL instances
-        // Don't remove duplicates here since we want to preserve all emojis in chronological order
         return emojis;
+    }
+
+    isEmojiCharacter(codePoint) {
+        // More precise emoji detection to avoid false positives
+        return (
+            // Emoticons and faces
+            (codePoint >= 0x1F600 && codePoint <= 0x1F64F) ||
+            // Miscellaneous Symbols and Pictographs
+            (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) ||
+            // Transport and Map Symbols
+            (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) ||
+            // Supplemental Symbols and Pictographs
+            (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) ||
+            // Symbols and Pictographs Extended-A
+            (codePoint >= 0x1FA00 && codePoint <= 0x1FA6F) ||
+            (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) ||
+            // Miscellaneous symbols (selective)
+            (codePoint >= 0x2600 && codePoint <= 0x26FF) ||
+            // Dingbats (selective)
+            (codePoint >= 0x2700 && codePoint <= 0x27BF) ||
+            // Playing card black joker
+            codePoint === 0x1F0CF ||
+            // Mahjong tile red dragon
+            codePoint === 0x1F004 ||
+            // Some common additional emojis
+            codePoint === 0x203C || // ‼️
+            codePoint === 0x2049 || // ⁉️
+            codePoint === 0x2122 || // ™️
+            codePoint === 0x2139 || // ℹ️
+            codePoint === 0x2194 || // ↔️
+            codePoint === 0x2195 || // ↕️
+            codePoint === 0x2196 || // ↖️
+            codePoint === 0x2197 || // ↗️
+            codePoint === 0x2198 || // ↘️
+            codePoint === 0x2199 || // ↙️
+            codePoint === 0x21A9 || // ↩️
+            codePoint === 0x21AA || // ↪️
+            codePoint === 0x231A || // ⌚
+            codePoint === 0x231B || // ⌛
+            codePoint === 0x2328 || // ⌨️
+            codePoint === 0x23CF || // ⏏️
+            codePoint === 0x23E9 || // ⏩
+            codePoint === 0x23EA || // ⏪
+            codePoint === 0x23EB || // ⏫
+            codePoint === 0x23EC || // ⏬
+            codePoint === 0x23ED || // ⏭️
+            codePoint === 0x23EE || // ⏮️
+            codePoint === 0x23EF || // ⏯️
+            codePoint === 0x23F0 || // ⏰
+            codePoint === 0x23F1 || // ⏱️
+            codePoint === 0x23F2 || // ⏲️
+            codePoint === 0x23F3 || // ⏳
+            codePoint === 0x23F8 || // ⏸️
+            codePoint === 0x23F9 || // ⏹️
+            codePoint === 0x23FA || // ⏺️
+            codePoint === 0x24C2 || // Ⓜ️
+            codePoint === 0x25AA || // ▪️
+            codePoint === 0x25AB || // ▫️
+            codePoint === 0x25B6 || // ▶️
+            codePoint === 0x25C0 || // ◀️
+            codePoint === 0x25FB || // ◻️
+            codePoint === 0x25FC || // ◼️
+            codePoint === 0x25FD || // ◽
+            codePoint === 0x25FE || // ◾
+            codePoint === 0x2600 || // ☀️
+            codePoint === 0x2601 || // ☁️
+            codePoint === 0x2602 || // ☂️
+            codePoint === 0x2603 || // ☃️
+            codePoint === 0x2604 || // ☄️
+            codePoint === 0x260E || // ☎️
+            codePoint === 0x2611 || // ☑️
+            codePoint === 0x2614 || // ☔
+            codePoint === 0x2615 || // ☕
+            codePoint === 0x2618 || // ☘️
+            codePoint === 0x261D || // ☝️
+            codePoint === 0x2620 || // ☠️
+            codePoint === 0x2622 || // ☢️
+            codePoint === 0x2623 || // ☣️
+            codePoint === 0x2626 || // ☦️
+            codePoint === 0x262A || // ☪️
+            codePoint === 0x262E || // ☮️
+            codePoint === 0x262F || // ☯️
+            codePoint === 0x2638 || // ☸️
+            codePoint === 0x2639 || // ☹️
+            codePoint === 0x263A || // ☺️
+            codePoint === 0x2640 || // ♀️
+            codePoint === 0x2642 || // ♂️
+            codePoint === 0x2648 || // ♈
+            codePoint === 0x2649 || // ♉
+            codePoint === 0x264A || // ♊
+            codePoint === 0x264B || // ♋
+            codePoint === 0x264C || // ♌
+            codePoint === 0x264D || // ♍
+            codePoint === 0x264E || // ♎
+            codePoint === 0x264F || // ♏
+            codePoint === 0x2650 || // ♐
+            codePoint === 0x2651 || // ♑
+            codePoint === 0x2652 || // ♒
+            codePoint === 0x2653 || // ♓
+            codePoint === 0x265F || // ♟️
+            codePoint === 0x2660 || // ♠️
+            codePoint === 0x2663 || // ♣️
+            codePoint === 0x2665 || // ♥️
+            codePoint === 0x2666 || // ♦️
+            codePoint === 0x2668 || // ♨️
+            codePoint === 0x267B || // ♻️
+            codePoint === 0x267E || // ♾️
+            codePoint === 0x267F || // ♿
+            codePoint === 0x2692 || // ⚒️
+            codePoint === 0x2693 || // ⚓
+            codePoint === 0x2694 || // ⚔️
+            codePoint === 0x2695 || // ⚕️
+            codePoint === 0x2696 || // ⚖️
+            codePoint === 0x2697 || // ⚗️
+            codePoint === 0x2699 || // ⚙️
+            codePoint === 0x269B || // ⚛️
+            codePoint === 0x269C || // ⚜️
+            codePoint === 0x26A0 || // ⚠️
+            codePoint === 0x26A1 || // ⚡
+            codePoint === 0x26AA || // ⚪
+            codePoint === 0x26AB || // ⚫
+            codePoint === 0x26B0 || // ⚰️
+            codePoint === 0x26B1 || // ⚱️
+            codePoint === 0x26BD || // ⚽
+            codePoint === 0x26BE || // ⚾
+            codePoint === 0x26C4 || // ⛄
+            codePoint === 0x26C5 || // ⛅
+            codePoint === 0x26C8 || // ⛈️
+            codePoint === 0x26CE || // ⛎
+            codePoint === 0x26CF || // ⛏️
+            codePoint === 0x26D1 || // ⛑️
+            codePoint === 0x26D3 || // ⛓️
+            codePoint === 0x26D4 || // ⛔
+            codePoint === 0x26E9 || // ⛩️
+            codePoint === 0x26EA || // ⛪
+            codePoint === 0x26F0 || // ⛰️
+            codePoint === 0x26F1 || // ⛱️
+            codePoint === 0x26F2 || // ⛲
+            codePoint === 0x26F3 || // ⛳
+            codePoint === 0x26F4 || // ⛴️
+            codePoint === 0x26F5 || // ⛵
+            codePoint === 0x26F7 || // ⛷️
+            codePoint === 0x26F8 || // ⛸️
+            codePoint === 0x26F9 || // ⛹️
+            codePoint === 0x26FA || // ⛺
+            codePoint === 0x26FD    // ⛽
+        );
     }
 
     generateStats(chatContent, emojis) {
