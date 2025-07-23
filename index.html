@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solomoji - Transform Your WhatsApp Chats into Emoji Posters</title>
+    <meta name="description" content="Turn your WhatsApp chat backups into beautiful emoji posters. Privacy-first, client-side processing.">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LK81E5R7QW"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-LK81E5R7QW');
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>🎨 Solomoji</h1>
+            </div>
+            <nav class="nav">
+                <a href="#how-it-works">How it works</a>
+                <a href="#upload">Create Poster</a>
+                <a href="#privacy">Privacy</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">Transform Your WhatsApp Memories into Art</h2>
+                <p class="hero-subtitle">Turn your chat backups into beautiful emoji posters that capture the emotional journey of your conversations</p>
+                <div class="hero-example">
+                    <div class="example-input">
+                        <h4>Your Chat:</h4>
+                        <div class="chat-preview">
+                            <div class="chat-message">[28.03.22] John: Great news! 😄👍</div>
+                            <div class="chat-message">[29.03.22] You: Amazing! 🧡</div>
+                            <div class="chat-message">[15.07.22] John: Happy birthday! 🥳🎈</div>
+                        </div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="example-output">
+                        <h4>Your Poster:</h4>
+                        <div class="emoji-result">😄👍🧡🥳🎈</div>
+                    </div>
+                </div>
+                <a href="#upload" class="cta-button">Create Your Poster</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2>How Solomoji Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">📱</div>
+                    <h3>Export Your Chat</h3>
+                    <p>Export your WhatsApp chat as a .txt file from your phone</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">⬆️</div>
+                    <h3>Upload Securely</h3>
+                    <p>Drag and drop your chat file - everything stays on your device</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🎨</div>
+                    <h3>Get Your Poster</h3>
+                    <p>Download a beautiful PDF poster with all your emojis in chronological order</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="upload-section">
+        <div class="container">
+            <h2>Create Your Emoji Poster</h2>
+            <div class="upload-container">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Drop your WhatsApp chat file here</h3>
+                        <p>or <span class="browse-link">browse files</span></p>
+                        <input type="file" id="fileInput" accept=".txt" hidden>
+                        <div class="file-requirements">
+                            <small>Supports .txt files from WhatsApp chat export</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing-area" id="processingArea" style="display: none;">
+                    <div class="processing-content">
+                        <div class="spinner"></div>
+                        <h3>Processing your chat...</h3>
+                        <p>Extracting emojis and creating your poster</p>
+                    </div>
+                </div>
+
+                <div class="result-area" id="resultArea" style="display: none;">
+                    <div class="result-content">
+                        <h3>Your Emoji Story</h3>
+                        <div class="emoji-output" id="emojiOutput"></div>
+                        <div class="result-stats" id="resultStats"></div>
+                        <div class="download-buttons">
+                            <button class="download-btn" id="downloadPdf">
+                                <i class="fas fa-download"></i> Download PDF Poster
+                            </button>
+                            <button class="secondary-btn" id="createAnother">Create Another</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Section -->
+    <section id="privacy" class="privacy-section">
+        <div class="container">
+            <div class="privacy-content">
+                <div class="privacy-icon">🔒</div>
+                <h2>Your Privacy is Our Priority</h2>
+                <div class="privacy-features">
+                    <div class="privacy-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>100% Client-Side Processing</h4>
+                        <p>Your chat files never leave your device. All processing happens in your browser.</p>
+                    </div>
+                    <div class="privacy-feature">
+                        <i class="fas fa-server"></i>
+                        <h4>No Server Storage</h4>
+                        <p>We don't store, save, or have access to any of your personal chat data.</p>
+                    </div>
+                    <div class="privacy-feature">
+                        <i class="fas fa-eye-slash"></i>
+                        <h4>No Data Collection</h4>
+                        <p>We only collect anonymous usage statistics to improve the service.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>🎨 Solomoji</h3>
+                    <p>Transform your chat memories into art</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="mailto:hello@solomoji.com">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Solomoji. Made with ❤️ for preserving digital memories.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+
+    <!-- Ko-fi Widget -->
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+    <script>
+        kofiWidgetOverlay.draw('solomoji', {
+            'type': 'floating-chat',
+            'floating-chat.donateButton.text': 'Support me',
+            'floating-chat.donateButton.background-color': '#667eea',
+            'floating-chat.donateButton.text-color': '#fff'
+        });
+    </script>
+</body>
+</html>
